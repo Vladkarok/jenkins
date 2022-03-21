@@ -15,18 +15,16 @@ pipeline {
             steps {
                 git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:Vladkarok/terraform-geocit-aws.git'
             }
-        }    
+        }
         stage('Terraform init') {
             steps{
                 sh 'terraform init'
             }
         }
-        stage('Terraform apply') {
+        stage('Terraform destroy') {
             steps{
-                sh 'terraform apply -auto-approve'
+                sh 'terraform destroy -auto-approve'
             }
         }
     }
 }
-
-
