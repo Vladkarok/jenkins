@@ -26,6 +26,11 @@ pipeline {
                 sh 'terraform apply -auto-approve'
             }
         }
+        stage('echo finished'){
+            steps{
+                sh 'echo nice'
+            }
+        }
     }
 }
 
