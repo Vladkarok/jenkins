@@ -1,0 +1,22 @@
+pipeline {
+    agent { label 'awx' }
+
+    environment {
+        db_user        = credentials('db_user')
+        db_password    = credentials('db_password')
+        db_name        = credentials('db_name')
+        email_login    = credentials('email_login')
+        email_password = credentials('email_password')
+    }
+
+    stages {
+        stage('Geo DB') {
+            steps {
+                ansibleTower extraVars: '''db_user: $db_user
+db_password: $db_password
+db_name: $db_name''', jobTemplate: 'Geo DB', jobType: 'run', throwExceptionWhenFail: false, towerCredentialsId: 'awx-cred', towerLogLevel: 'full', towerServer: 'AWX'
+            }
+        }
+    }
+}
+
