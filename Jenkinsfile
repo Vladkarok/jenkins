@@ -28,7 +28,7 @@ pipeline {
         }
         stage('echo finished'){
             steps{
-                sh 'echo nice'
+                sh 'echo "zuppa gut recommendiren gerbata"'
             }
         }
     }
