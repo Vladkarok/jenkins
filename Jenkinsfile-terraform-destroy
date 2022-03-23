@@ -35,7 +35,7 @@ pipeline {
             }
         }
         
-        stage('Slack initial message') {
+        stage('Slack final message') {
             steps {
                 slackSend color: 'blue', message: "${currentBuild.durationString}"
                 slackSend color: 'blue', message: "${currentBuild.currentResult}" 
