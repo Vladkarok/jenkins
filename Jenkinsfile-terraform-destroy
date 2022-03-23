@@ -24,7 +24,6 @@ node('1'){
                 sh 'terraform destroy -auto-approve';
 
             }
-        }
         } catch (e) {
             // If there was an exception thrown, the build failed
             currentBuild.result = "FAILED"
@@ -34,7 +33,7 @@ node('1'){
             notifyBuild(currentBuild.result)
         }
     }
-}
+
 
 def notifyBuild(String buildStatus = 'STARTED') {
     // build status of null means successful
