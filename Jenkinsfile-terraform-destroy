@@ -9,6 +9,15 @@ node('1'){
         try {
             notifyBuild('STARTED')
 
+            environment {
+                AWS_ACCESS_KEY_ID        = credentials('TERRAFORM_AWS_ACCESS_KEY_ID')
+                AWS_SECRET_ACCESS_KEY    = credentials('TERRAFORM_AWS_SECRET_ACCESS_KEY')
+            }
+
+            tools {
+                terraform 'Terraform'
+            }
+
             stage('Terraform init') {
                 steps{
                     sh 'terraform init';
