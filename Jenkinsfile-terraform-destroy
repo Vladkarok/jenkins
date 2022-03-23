@@ -1,10 +1,8 @@
-stage 'Build'
-
+stage 'Destroy'
+agent { label '1' }
 node {
   try {
     notifyBuild('STARTED')
-
-    agent { label '1' }
 
     environment {
         AWS_ACCESS_KEY_ID        = credentials('TERRAFORM_AWS_ACCESS_KEY_ID')
