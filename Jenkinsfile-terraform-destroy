@@ -1,4 +1,9 @@
-pipeline {
+stage 'Build'
+
+node {
+  try {
+    notifyBuild('STARTED')
+
     agent { label '1' }
 
     environment {
@@ -11,36 +16,59 @@ pipeline {
     }
 
     stages {
-        
-        stage('Slack initial message') {
-            steps {
-                slackSend color: 'blue', message: "> *Start pipeline*: ${BUILD_TAG} ${JOB_NAME} ${NODE_NAME}"
-            }
-        }
-        
         stage('Git checkout') {
             steps {
                 git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:Vladkarok/terraform-geocit-aws.git'
             }
         }
+
         stage('Terraform init') {
             steps{
                 sh 'terraform init';
                 sh 'terraform validate';
             }
         }
+
         stage('Terraform destroy') {
             steps{
                 sh 'terraform destroy -auto-approve'
             }
         }
-        
-        stage('Slack final message') {
-            steps {
-                slackSend color: 'blue', message: "${currentBuild.durationString}"
-                slackSend color: 'blue', message: "${currentBuild.currentResult}" 
-            }
-        }
-        
+
     }
+
+  } catch (e) {
+    // If there was an exception thrown, the build failed
+    currentBuild.result = "FAILED"
+    throw e
+  } finally {
+    // Success or failure, always send notifications
+    notifyBuild(currentBuild.result)
+  }
+}
+
+def notifyBuild(String buildStatus = 'STARTED') {
+  // build status of null means successful
+  buildStatus = buildStatus ?: 'SUCCESS'
+
+  // Default values
+  def colorName = 'RED'
+  def colorCode = '#FF0000'
+  def summary = "${subject} (${env.BUILD_URL})"
+
+  // Override default values based on build status
+  if (buildStatus == 'STARTED') {
+    color = 'YELLOW'
+    colorCode = '#FFFF00'
+  } else if (buildStatus == 'SUCCESS') {
+    color = 'GREEN'
+    colorCode = '#00FF00'
+  } else {
+    color = 'RED'
+    colorCode = '#FF0000'
+  }
+
+  // Send notifications
+  slackSend (color: colorCode, message: summary)
+
 }
