@@ -23,7 +23,7 @@ pipeline {
                         notifyBuild("STARTED")
                         sh "terraform init"
                         sh "terraform validate"
-                        sh "terraform destroyy -auto-approve"
+                        sh "terraform destroy -auto-approve"
                     } catch (e) {
                         // If there was an exception thrown, the build failed
                         currentBuild.result = "FAILED"
