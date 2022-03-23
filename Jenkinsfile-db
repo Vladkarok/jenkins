@@ -18,9 +18,10 @@ pipeline {
                         ansibleTower extraVars: '''db_user: $db_user
 db_password: $db_password
 db_name: $db_name''', jobTemplate: 'Geo DB', jobType: 'run', throwExceptionWhenFail: false, towerCredentialsId: 'awx-cred', towerLogLevel: 'full', towerServer: 'AWX'
-            } catch (e) {
+                    } catch (e) {
                         // If there was an exception thrown, the build failed
                         currentBuild.result = "FAILED"
+                        jiraComment body: "Job \"${env.JOB_NAME}\" FAILED! ${env.BUILD_URL}", issueKey: 'CDA-21'
                         throw e
                     } finally {
                         // Success or failure, always send notifications
