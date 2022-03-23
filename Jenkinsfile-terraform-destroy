@@ -11,6 +11,13 @@ pipeline {
     }
 
     stages {
+        
+        stage('Slack initial message') {
+            steps {
+                slackSend color: 'blue', message: "> *Start pipeline*: ${BUILD_TAG} ${JOB_NAME} ${NODE_NAME}"
+            }
+        }
+        
         stage('Git checkout') {
             steps {
                 git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:Vladkarok/terraform-geocit-aws.git'
@@ -18,7 +25,8 @@ pipeline {
         }
         stage('Terraform init') {
             steps{
-                sh 'terraform init'
+                sh 'terraform init';
+                sh 'terraform validate';
             }
         }
         stage('Terraform destroy') {
@@ -26,5 +34,13 @@ pipeline {
                 sh 'terraform destroy -auto-approve'
             }
         }
+        
+        stage('Slack initial message') {
+            steps {
+                slackSend color: 'blue', message: "${currentBuild.durationString}"
+                slackSend color: 'blue', message: "${currentBuild.currentResult}" 
+            }
+        }
+        
     }
 }
