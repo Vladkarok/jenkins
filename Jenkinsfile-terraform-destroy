@@ -18,15 +18,11 @@ node('1'){
                 terraform 'Terraform'
             }
 
-            stage('Terraform init') {
-                steps{
-                    sh 'terraform init';
-                    sh 'terraform validate';
-                }
-            stage('Terraform destroy') {
-                steps{
-                    sh 'terraform destroy -auto-approve'
-                }
+            steps{
+                sh 'terraform init';
+                sh 'terraform validate';
+                sh 'terraform destroy -auto-approve';
+
             }
         }
         } catch (e) {
