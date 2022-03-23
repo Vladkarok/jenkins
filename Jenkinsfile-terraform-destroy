@@ -1,39 +1,42 @@
-node('1'){
-    stage('Git checkout') {
-        steps {
-            git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:Vladkarok/terraform-geocit-aws.git'
-        }
-    }
+pipeline {
+    agent { label '1' }
+
     environment {
         AWS_ACCESS_KEY_ID        = credentials('TERRAFORM_AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY    = credentials('TERRAFORM_AWS_SECRET_ACCESS_KEY')
     }
 
     tools {
-            terraform 'Terraform'
+        terraform 'Terraform'
     }
 
-
-    stage ('Build') {
-        try {
-            notifyBuild('STARTED')
-
-            steps{
-                sh 'terraform init';
-                sh 'terraform validate';
-                sh 'terraform destroy -auto-approve';
+    stages {
+        stage('Git checkout') {
+            steps {
+                git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:Vladkarok/terraform-geocit-aws.git'
             }
-        } catch (e) {
-            // If there was an exception thrown, the build failed
-            currentBuild.result = "FAILED"
-            throw e
-        } finally {
-            // Success or failure, always send notifications
-            notifyBuild(currentBuild.result)
+        }
+        stage("Terraform destroy"){
+            steps {
+                script {
+                    try {
+                        notifyBuild("STARTED")
+                        sh "terraform init"
+                        sh "terraform validate"
+                        sh "terraform destroy -auto-approve"
+                    } catch (e) {
+                        // If there was an exception thrown, the build failed
+                        currentBuild.result = "FAILED"
+                        throw e
+                    } finally {
+                        // Success or failure, always send notifications
+                        notifyBuild(currentBuild.result)
+                    }
+                }
+            }
         }
     }
 }
-
 def notifyBuild(String buildStatus = 'STARTED') {
     // build status of null means successful
     buildStatus =  buildStatus ?: 'SUCCESSFUL'
@@ -42,7 +45,7 @@ def notifyBuild(String buildStatus = 'STARTED') {
     def colorName = 'RED'
     def colorCode = '#FF0000'
     def subject = "${buildStatus}: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'"
-    def summary = "${subject} (${env.BUILD_URL})"
+    def summary = "${subject} (${env.BUILD_URL}) (${currentBuild.durationString})"
 
     // Override default values based on build status
     if (buildStatus == 'STARTED') {
