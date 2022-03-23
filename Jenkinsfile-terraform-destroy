@@ -1,6 +1,7 @@
+pipeline {
 stage 'Destroy'
+agent { label '1' }
 node {
-  agent { label '1' }
   try {
     notifyBuild('STARTED')
 
@@ -69,4 +70,5 @@ def notifyBuild(String buildStatus = 'STARTED') {
   // Send notifications
   slackSend (color: colorCode, message: summary)
 
+}
 }
