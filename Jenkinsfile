@@ -27,6 +27,7 @@ pipeline {
                     } catch (e) {
                         // If there was an exception thrown, the build failed
                         currentBuild.result = "FAILED"
+                        jiraComment body: "Job \"${env.JOB_NAME}\" FAILED! ${env.BUILD_URL}", issueKey: 'CDA-21'
                         throw e
                     } finally {
                         // Success or failure, always send notifications
