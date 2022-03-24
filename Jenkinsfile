@@ -16,7 +16,7 @@ pipeline {
                 git branch: 'main', credentialsId: 'github-ssh', url: 'git@github.com:Vladkarok/terraform-geocit-aws.git'
             }
         }
-        stage("Terraform destroy"){
+        stage("Terraform apply"){
             steps {
                 script {
                     try {
