@@ -21,9 +21,9 @@ pipeline {
                 script {
                     try {
                         notifyBuild("STARTED")
-                        sh "terraform init"
-                        sh "terraform validate"
-                        sh "terraform apply -auto-approve"
+                        sh 'terraform init'
+                        sh 'terraform validate'
+                        sh 'terraform apply -auto-approve'
                     } catch (e) {
                         // If there was an exception thrown, the build failed
                         currentBuild.result = "FAILED"
