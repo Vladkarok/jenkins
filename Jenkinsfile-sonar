@@ -6,7 +6,7 @@ pipeline {
         sonar_username = credentials('sonar_db_username')
         sonar_password = credentials('sonar_db_password')
         sonar_database = credentials('sonar_db_database')
-        sonar_db_ip    = 10.138.0.17
+        sonar_db_ip    = '10.138.0.17'
     }
     stages {
         stage('SCM') {
